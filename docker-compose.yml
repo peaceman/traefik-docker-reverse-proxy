@@ -1,0 +1,35 @@
+x-restart-policy: &restart-policy
+  restart: unless-stopped
+
+version: "2.4"
+services:
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    <<: *restart-policy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1
+
+  traefik:
+    image: traefik:2.2
+    environment:
+      TRAEFIK_ENTRYPOINT_http_ADDRESS: ":80"
+      TRAEFIK_ENTRYPOINT_https_ADDRESS: ":443"
+      TRAEFIK_PROVIDERS_DOCKER_ENDPOINT: "tcp://socket-proxy:2375"
+      TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
+      TRAEFIK_PROVIDERS_DOCKER_NETWORK: "${GATEWAY_NETWORK}"
+      TRAEFIK_PROVIDERS_FILE_DIRECTORY: "/config"
+    volumes:
+        - ./config:/config
+    networks:
+      - default
+      - container-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+
+networks:
+  container-gateway:
+    name: "${GATEWAY_NETWORK}"
+    external: true

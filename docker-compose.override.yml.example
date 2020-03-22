@@ -1,0 +1,11 @@
+version: "2.4"
+services:
+  traefik:
+    environment:
+      TRAEFIK_CERTIFICATESRESOLVERS_acme-tls_ACME_EMAIL: "${ACME_EMAIL}"
+      TRAEFIK_CERTIFICATESRESOLVERS_acme-tls_ACME_STORAGE: "/acme/acme.json"
+      TRAEFIK_CERTIFICATESRESOLVERS_acme-tls_ACME_TLSCHALLENGE: "true"
+      # use the staging server during testing
+      TRAEFIK_CERTIFICATESRESOLVERS_acme-tls_ACME_CASERVER: "https://acme-staging-v02.api.letsencrypt.org/directory"
+    volumes:
+      - ./acme:/acme

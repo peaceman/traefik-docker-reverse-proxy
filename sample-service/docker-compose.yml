@@ -1,0 +1,18 @@
+version: "2.4"
+services:
+  whoami:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.middlewares=force-tls@file"
+      - "traefik.http.routers.whoami-tls.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami-tls.tls.certresolver=acme-tls"
+    networks:
+      - default
+      - container-gateway
+
+networks:
+  container-gateway:
+    name: "${GATEWAY_NETWORK}"
+    external: true
