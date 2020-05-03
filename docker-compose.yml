@@ -13,6 +13,7 @@ services:
 
   traefik:
     image: traefik:2.2
+    <<: *restart-policy
     environment:
       TRAEFIK_ENTRYPOINTS_http_ADDRESS: ":80"
       TRAEFIK_ENTRYPOINTS_https_ADDRESS: ":443"
